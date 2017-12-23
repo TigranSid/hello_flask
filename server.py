@@ -36,7 +36,7 @@ def get_token_auth_header():
     if not auth:
         raise AuthError({"code": "authorization_header_missing",
                         "description":
-                            "Authorization header is expected"}, 401)
+                            "Welcome to ETAaaS. Authorization is required."}, 401)
 
     parts = auth.split()
 
@@ -135,13 +135,21 @@ def requires_auth(f):
 
 # Controllers API
 
+#Public Access
+@APP.route("/", methods=['GET'])
+#@cross_origin(headers=["Content-Type", "Authorization"])
+#@cross_origin(headers=["Access-Control-Allow-Origin", "*"])
+#@requires_auth
+def index-get():
+    return "Welcome to ETAaaS. Please refer to documentation to make your first API call."
+
 #Secure Access
-@APP.route("/")
+@APP.route("/", methods=['POST'])
 @cross_origin(headers=["Content-Type", "Authorization"])
 @cross_origin(headers=["Access-Control-Allow-Origin", "*"])
 @requires_auth
-def secure():
-    return "All good. You only get this message if you're authenticated"
+def index-post():
+    return "POST Secure Access."
 
 
 if __name__ == "__main__":
