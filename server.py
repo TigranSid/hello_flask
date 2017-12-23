@@ -141,7 +141,7 @@ def requires_auth(f):
 #@cross_origin(headers=["Access-Control-Allow-Origin", "*"])
 #@requires_auth
 def index_get():
-    return "Welcome to ETAaaS. Please refer to documentation to make your first API call."
+    return "Welcome to ETAaaS. Please refer to documentation to make your first API call.\n"
 
 #Secure Access
 @APP.route("/", methods=['POST'])
@@ -149,8 +149,7 @@ def index_get():
 @cross_origin(headers=["Access-Control-Allow-Origin", "*"])
 @requires_auth
 def index_post():
-    return "POST Secure Access."
-
+    return jsonify(dump(request))
 
 if __name__ == "__main__":
     APP.run(host="0.0.0.0", port=3010)
