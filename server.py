@@ -10,7 +10,7 @@ from flask_cors import cross_origin
 from jose import jwt
 
 AUTH0_DOMAIN = "tigransid.auth0.com"
-AUTH0_AUDIENCE = "https://tigransid-hello.herokuapp.com"
+AUTH0_AUDIENCE = "https://tigransid-hello.herokuapp.com/"
 ALGORITHMS = ["RS256"]
 APP = Flask(__name__)
 
