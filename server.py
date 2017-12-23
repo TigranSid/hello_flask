@@ -140,7 +140,7 @@ def requires_auth(f):
 #@cross_origin(headers=["Content-Type", "Authorization"])
 #@cross_origin(headers=["Access-Control-Allow-Origin", "*"])
 #@requires_auth
-def index-get():
+def index_get():
     return "Welcome to ETAaaS. Please refer to documentation to make your first API call."
 
 #Secure Access
@@ -148,7 +148,7 @@ def index-get():
 @cross_origin(headers=["Content-Type", "Authorization"])
 @cross_origin(headers=["Access-Control-Allow-Origin", "*"])
 @requires_auth
-def index-post():
+def index_post():
     return "POST Secure Access."
 
 
