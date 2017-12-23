@@ -3,19 +3,14 @@
 
 from functools import wraps
 import json
-from os import environ as env
 from six.moves.urllib.request import urlopen
 
-from dotenv import load_dotenv, find_dotenv
 from flask import Flask, request, jsonify, _app_ctx_stack
 from flask_cors import cross_origin
 from jose import jwt
 
-ENV_FILE = find_dotenv()
-if ENV_FILE:
-    load_dotenv(ENV_FILE)
 AUTH0_DOMAIN = "tigransid.auth0.com"
-AUTH0_AUDIENCE = env.get("https://tigransid-hello.herokuapp.com")
+AUTH0_AUDIENCE = "https://tigransid-hello.herokuapp.com"
 ALGORITHMS = ["RS256"]
 APP = Flask(__name__)
 
@@ -170,4 +165,4 @@ def secured_private_ping():
 
 
 if __name__ == "__main__":
-    APP.run(host="0.0.0.0", port=env.get("PORT", 3010))
+    APP.run(host="0.0.0.0", port=3010)
