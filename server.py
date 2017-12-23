@@ -14,7 +14,7 @@ from jose import jwt
 ENV_FILE = find_dotenv()
 if ENV_FILE:
     load_dotenv(ENV_FILE)
-AUTH0_DOMAIN = env.get("tigransid.auth0.com")
+AUTH0_DOMAIN = "tigransid.auth0.com"
 AUTH0_AUDIENCE = env.get("https://tigransid-hello.herokuapp.com")
 ALGORITHMS = ["RS256"]
 APP = Flask(__name__)
