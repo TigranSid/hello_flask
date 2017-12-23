@@ -134,34 +134,14 @@ def requires_auth(f):
 
 
 # Controllers API
-@APP.route("/")
-@cross_origin(headers=["Content-Type", "Authorization"])
-def public():
-    """No access token required to access this route
-    """
-    return "Welcome to ETAaaS. Please refer to the documentation for more information.\n"
 
-
+#Secure Access
 @APP.route("/")
 @cross_origin(headers=["Content-Type", "Authorization"])
 @cross_origin(headers=["Access-Control-Allow-Origin", "*"])
 @requires_auth
 def secure():
-    """A valid access token is required to access this route
-    """
     return "All good. You only get this message if you're authenticated"
-
-
-@APP.route("/secured/private/ping")
-@cross_origin(headers=["Content-Type", "Authorization"])
-@cross_origin(headers=["Access-Control-Allow-Origin", "*"])
-@requires_auth
-def secured_private_ping():
-    """A valid access token and an appropriate scope are required to access this route
-    """
-    if requires_scope("read:agenda"):
-        return "All good. You're authenticated and the access token has the appropriate scope"
-    return "You don't have access to this resource"
 
 
 if __name__ == "__main__":
