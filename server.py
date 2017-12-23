@@ -134,12 +134,12 @@ def requires_auth(f):
 
 
 # Controllers API
-@APP.route("/ping")
+@APP.route("/")
 @cross_origin(headers=["Content-Type", "Authorization"])
 def ping():
     """No access token required to access this route
     """
-    return "All good. You don't need to be authenticated to call this"
+    return "Welcome to ETAaaS. Please refer to the documentation for more information.\n"
 
 
 @APP.route("/secured/ping")
