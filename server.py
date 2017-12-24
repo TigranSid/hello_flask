@@ -1,5 +1,4 @@
-"""Python Flask API Auth0 integration example
-"""
+# ETAaaS Client API Interface
 
 from functools import wraps
 import json
@@ -8,9 +7,10 @@ from six.moves.urllib.request import urlopen
 from flask import Flask, request, jsonify, _app_ctx_stack
 from flask_cors import cross_origin
 from jose import jwt
+from eta import Eta
 
-AUTH0_DOMAIN = "tigransid.auth0.com"
-AUTH0_AUDIENCE = "https://tigransid-hello.herokuapp.com/"
+AUTH0_ISSUER = "https://tigransid.auth0.com/"
+AUTH0_AUDIENCE = 'http://localhost:5000'
 ALGORITHMS = ["RS256"]
 APP = Flask(__name__)
 
@@ -20,7 +20,6 @@ class AuthError(Exception):
     def __init__(self, error, status_code):
         self.error = error
         self.status_code = status_code
-
 
 @APP.errorhandler(AuthError)
 def handle_auth_error(ex):
@@ -79,7 +78,7 @@ def requires_auth(f):
     @wraps(f)
     def decorated(*args, **kwargs):
         token = get_token_auth_header()
-        jsonurl = urlopen("https://"+AUTH0_DOMAIN+"/.well-known/jwks.json")
+        jsonurl = urlopen(AUTH0_ISSUER+".well-known/jwks.json")
         jwks = json.loads(jsonurl.read())
         try:
             unverified_header = jwt.get_unverified_header(token)
@@ -110,7 +109,7 @@ def requires_auth(f):
                     rsa_key,
                     algorithms=ALGORITHMS,
                     audience=AUTH0_AUDIENCE,
-                    issuer="https://"+AUTH0_DOMAIN+"/"
+                    issuer=AUTH0_ISSUER
                 )
             except jwt.ExpiredSignatureError:
                 raise AuthError({"code": "token_expired",
@@ -135,21 +134,36 @@ def requires_auth(f):
 
 # Controllers API
 
-#Public Access
+#Public GET Access
 @APP.route("/", methods=['GET'])
-#@cross_origin(headers=["Content-Type", "Authorization"])
-#@cross_origin(headers=["Access-Control-Allow-Origin", "*"])
-#@requires_auth
 def index_get():
     return "Welcome to ETAaaS. Please refer to documentation to make your first API call.\n"
 
-#Secure Access
+#Secure POST Access
 @APP.route("/", methods=['POST'])
 @cross_origin(headers=["Content-Type", "Authorization"])
 @cross_origin(headers=["Access-Control-Allow-Origin", "*"])
 @requires_auth
 def index_post():
-    return jsonify(dump(request))
+	try:
+		data = request.get_json()
+		eta = Eta(
+		data['origin'], 
+		data['destination'], 
+		data['mode']
+		)
+	except KeyError:
+		raise AuthError({
+			"code": KeyError.__name__,
+			"hint": "An error was made in the JSON Keys you provided."},
+			400)
+	except Exception as e:
+		raise AuthError({
+			"code": str(e),
+			"hint": "Unexpected Exception Message. Please contact support with the data you used so we add it to our automated tests."},
+			400)
+	return eta.toJSON()
+
 
 if __name__ == "__main__":
-    APP.run(host="0.0.0.0", port=3010)
+    APP.run(debug=True)
