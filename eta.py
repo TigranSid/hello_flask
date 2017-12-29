@@ -2,7 +2,9 @@
 #Google API Key: AIzaSyB-eAzkjdfmO0IbI22MYUGSuMFSiImiueA
 
 import json
-from transaction import Transaction
+from transaction import GoogleTransaction
+from transaction import HereTransaction
+from threading import Thread
 
 class Eta: # Définition de notre classe Eta
 	"""
@@ -27,11 +29,24 @@ class Eta: # Définition de notre classe Eta
 
 	def calculate(self, origin, destination, mode):
 		"""Méthode pour lancer la transaction!!"""
-		trans = Transaction(origin, destination, mode, "google")
-		self.distance = trans.distance
-		self.duration = trans.duration
+		# On parallélise les appels ! 
+		threads = []
+		t = Thread(target=GoogleTransaction, args=(origin, destination, mode))
+		threads.append(t)
+		t = Thread(target=HereTransaction, args=(origin, destination, mode))
+		threads.append(t)
+		[ t.start() for t in threads ]
+		[ t.join() for t in threads ]
 		
+		"""
+		trans = GoogleTransaction(origin, destination, mode)
+		print("Google:\tDistance:"+trans.get_distance()+"\tDuration:"+trans.get_duration())
+		trans = HereTransaction(origin, destination, mode)
+		print("HERE:\tDistance:"+trans.get_distance()+"\tDuration:"+trans.get_duration())
+		self.distance = trans.get_distance()
+		self.duration = trans.get_duration()
+		"""
 
-	def toJSON(self):
+	def to_JSON(self):
 		return json.dumps(self, default=lambda o: o.__dict__, 
 			sort_keys=True, indent=4)

@@ -162,7 +162,7 @@ def index_post():
 			"code": str(e),
 			"hint": "Unexpected Exception Message. Please contact support with the data you used so we add it to our automated tests."},
 			400)
-	return eta.toJSON()
+	return eta.to_JSON()
 
 
 if __name__ == "__main__":
