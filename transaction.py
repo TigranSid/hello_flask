@@ -4,6 +4,7 @@ import json
 from json import JSONDecoder
 from threading import Thread
 from datetime import datetime
+import re
 
 # Constantes
 GMAP_KEY = "AIzaSyB-eAzkjdfmO0IbI22MYUGSuMFSiImiueA"
@@ -125,15 +126,23 @@ class HereTransaction(Transaction):
 		Transaction.__init__(self, transactions, origin, destination, mode)
 
 		# On lance 2 Threads pour geocoder en parallèle aux geocodes
-		trip = ["",""]
+		trip = [origin,destination]
 		delay_start = datetime.now()
 		threads = []
-		t = Thread(target=self.geocode, args=('o', origin, trip))
-		threads.append(t)
-		t = Thread(target=self.geocode, args=('d', destination, trip))
-		threads.append(t)
-		[ t.start() for t in threads ]
-		[ t.join() for t in threads ]
+		
+		#On vérifie si String est de la forme : r"\d+\.    r'[-+]?\d+(\.\d*)?,[-+]?\d+(\.\d*)?'
+		pattern = re.compile(r'[-+]?\d+(\.\d*)?,[-+]?\d+(\.\d*)?')
+		
+		if pattern.fullmatch(origin) == None: #Pas une coordonnées GPS, on Geocode! 	
+			t = Thread(target=self.geocode, args=('o', origin, trip))
+			threads.append(t)
+		if pattern.fullmatch(destination) == None: #Pas une coordonnées GPS, on Geocode! 
+			t = Thread(target=self.geocode, args=('d', destination, trip))
+			threads.append(t)
+		
+		if len(threads) > 0: # On a un thread de geocoding a lancer. 
+			[ t.start() for t in threads ]
+			[ t.join() for t in threads ]
 
 		#Calcul de la distance et de la durée
 		r = requests.get(
@@ -154,6 +163,8 @@ class HereTransaction(Transaction):
 
 class GoogleGeocodeTransaction(Transaction):
 	"""
+	DEPRECATED - NE PAS IMPORTER NI UTILISER
+	Performance insuffisante. 
 	On définit la sous-classe GoogleGeocode qui fait d'abord un geocode avant d'appeler Matrix. 
 	On espère atteindre la rapidité de la requête HERE.
 	On doit d'abord géocoder l'origine/destination en coordonnées GPS avant de faire la requête de distance/durée. 

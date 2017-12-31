@@ -9,7 +9,7 @@ APP = Flask(__name__)
 
 # Controllers API
 
-#Public GET Access
+#Public GET Accessdedede
 @APP.route("/", methods=['GET'])
 def index_get():
     return "Welcome to ETAaaS. Please refer to documentation to make your first API call.\n"
@@ -42,4 +42,4 @@ def index_post():
 
 
 if __name__ == "__main__":
-    APP.run(debug=False)
+    APP.run(debug=True)
